@@ -63,15 +63,15 @@ See the formatters in lib/views/formatters to see their full documentation.
 
 == Adding formatters
 
-You can add a formatter by inheriting from View::Formatter.
-The only method you need to implement is the to_s method.
+You can add a formatter by inheriting from <code>View::Formatter</code>.
+The only method you need to implement is the <code>to_s</code> method.
 
 In the class you have access to the following methods:
 
-* value: the object passed in
-* options: a filtered hash of options
-* all_options: the unfiltered hash
-* template: call methods like link_to on this
+* <code>value</code>: the object passed in
+* <code>options</code>: a filtered hash of options
+* <code>all_options</code>: the unfiltered hash
+* <code>template</code>: call methods like link_to on this
 
 If you wanted a uppercase formatter for example, you could do this:
 
@@ -85,7 +85,7 @@ If you wanted a uppercase formatter for example, you could do this:
 
 The name of the formatter is automatically infered from the name of the class.
 
-You can use the .as method to specify a different name.
+You can use the <code>.as</code> method to specify a different name.
 
   class Foo < View::Formatter
     as :bar
@@ -99,7 +99,7 @@ You can control which options are allowed, by adding reserved options:
   end
 
 Now, the options method will return the options passed by the user, minus foo and bar.
-To use them, in your code, use the all_options method.
+To use them, in your code, use the <code>all_options</code> method.
 This is done to easily pass the options to another method, without cluttering:
 
   class Paragraph < View::Formatter
@@ -108,7 +108,7 @@ This is done to easily pass the options to another method, without cluttering:
     end
   end
 
-To more tightly control which options are allowed, specify the allowed_options.
+To more tightly control which options are allowed, specify the allowed options:
 
   class Size < View::Formatter
     self.allowed_options = [ :separator, :delimiter, :precision ]
@@ -121,7 +121,7 @@ You can use the existing formatters as examples.
 
 == Configuration:
 
-See lib/view.rb for information on configuration.
+See <code>lib/view.rb</code> for information on configuration.
 
 == Installation
 
@@ -131,7 +131,7 @@ In Rails 3, just add it to your Gemfile:
 
   gem 'view'
 
-Run <tt>bundle install</tt> and you're ready to go!
+Run <code>bundle install</code> and you're ready to go!
 
 === Rails 2
 
@@ -139,15 +139,15 @@ In Rails 2, add it to app/environment.rb:
 
   config.gem 'view'
 
-And run <tt>rake gems:install</tt> to get it.
+And run <code>rake gems:install</code> to get it.
 
-Afterwards, include the helper mehtod manually, by editing app/helpers/application_helper.rb:
+Afterwards, include the helper manually, by editing <code>app/helpers/application_helper.rb</code>:
 
   module ApplicationHelper
     include View::Helper
   end
 
-Caution: some helpers may use new helper methods from Rails 3 and might not work in Rails 2.
+Caution: some formatters may use new helper methods from Rails 3 and might not work in Rails 2.
 
 == Contributing
 
