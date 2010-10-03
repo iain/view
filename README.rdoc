@@ -127,27 +127,27 @@ See lib/view.rb for information on configuration.
 
 === Rails 3
 
-  In Rails 3, just add it to your Gemfile:
+In Rails 3, just add it to your Gemfile:
 
-    gem 'view'
+  gem 'view'
 
-  And run <tt>bundle install</tt> to get it.
+Run <tt>bundle install</tt> and you're ready to go!
 
 === Rails 2
 
-  In Rails 2, add it to app/environment.rb:
+In Rails 2, add it to app/environment.rb:
 
-    config.gem 'view'
+  config.gem 'view'
 
-  And run <tt>rake gems:install</tt> to get it.
+And run <tt>rake gems:install</tt> to get it.
 
-  Afterwards, include the helper mehtod manually, by editing app/helpers/application_helper.rb:
+Afterwards, include the helper mehtod manually, by editing app/helpers/application_helper.rb:
 
-    module ApplicationHelper
-      include View::Helper
-    end
+  module ApplicationHelper
+    include View::Helper
+  end
 
-  Caution: some helpers may use new helper methods from Rails 3 and might not work in Rails 2.
+Caution: some helpers may use new helper methods from Rails 3 and might not work in Rails 2.
 
 == Contributing
 
