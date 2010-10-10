@@ -33,10 +33,10 @@ View will automatically try to choose the proper formatter. You can specify a fo
 
   <%= view @post.created_at, :as => :date %>
 
-You can add a block to specify your own behavior. The parsed value is passed in as a block-variable.
+You can add a block to specify your own behavior. The formatter is passed in as a block-variable.
 
-  <%= view @post.author do |author| %>
-    <%= link_to author, @post.author %>
+  <%= view @post.author do |formatter| %>
+    <%= link_to formatter.to_s, formatter.value %>
   <% end %>
 
 Most formatters pass their options down to the method they use, such as the image formatter:

@@ -2,12 +2,12 @@ require 'spec_helper'
 
 describe "View::Formatter" do
 
-  it "doesn't touch strings" do
+  it "works" do
     View.format("bar").should == "bar"
   end
 
   it "parses the block" do
-    View.format("bar") { |val| val.upcase }.should == "BAR"
+    View.format("bar") { |formatter| formatter.to_s.upcase }.should == "BAR"
   end
 
 end

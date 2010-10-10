@@ -28,11 +28,11 @@ module View
       auto_formatters.unshift(:formatter => formatter_name, :block => block)
     end
 
-    private
-
     def format
-      format!
+      formatted_value
     end
+
+    private
 
     def self.auto_formatters
       @auto_formatters ||= []

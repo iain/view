@@ -68,10 +68,7 @@ module View
     # @abstract Subclass and override {#format} to implement your own formatter.
     # @return [String] the formatted value
     def format
-      msg <<-MSG.squeeze(' ')
-        The only thing a formatter needs to do is implement the #format method.
-        If you see this error, you forgot to do that for the #{self.class.type} formatter.
-      MSG
+      msg = "The '#{self.class.type}' formatter needs to implement the #format method."
       raise NotImplementedError.new(msg)
     end
 
@@ -114,19 +111,30 @@ module View
       end
     end
 
-    # This calls the format action. You can override it to do something with
-    # the formatted value. This doesn't (and shouldn't) do any formatting
-    # itself.
+    # The final result of the formatter, with the block captured if given.
     #
-    # @see #format
-    def to_s
-      format
+    # If a template is given, use it to capture the block, for maximum
+    # integration with ActionView.
+    #
+    # @return [String]
+    def format!
+      if block
+        captured_value
+      else
+        to_s
+      end
     end
 
     # @return All options, unfiltered.
     # @see #options
     def all_options
       @options
+    end
+
+    # A hook for formatters to override so they can inject code between above
+    # the formatting, without all their inherited classes knowing about it.
+    def to_s
+      format
     end
 
     private
@@ -136,15 +144,7 @@ module View
     end
 
     def self.format(*args, &block)
-      new(*args, &block).send(:format!)
-    end
-
-    def format!
-      if block
-        captured_value
-      else
-        formatted_value
-      end
+      new(*args, &block).send(:formatted_value)
     end
 
     def self.formatters
@@ -156,6 +156,11 @@ module View
       @options  = options
       @template = template
       @block    = block
+    end
+
+    def formatted_value
+      formatter_not_found unless formatter
+      formatter.new(value, all_options, template, &block).format!
     end
 
     def template_can_capture?
@@ -171,16 +176,11 @@ module View
     end
 
     def captured_value_by_template
-      template.capture(*block_arguments, &block)
+      template.capture(self, *block_arguments, &block)
     end
 
     def captured_return_value
-      block.call(*block_arguments)
-    end
-
-    def formatted_value
-      formatter_not_found unless formatter
-      formatter.new(value, all_options, template, &block).to_s
+      block.call(self, *block_arguments)
     end
 
     def formatter
@@ -205,7 +205,7 @@ module View
     end
 
     def block_arguments
-      all_options[:block_arguments] || [ formatted_value ]
+      all_options[:block_arguments] || []
     end
 
     def as

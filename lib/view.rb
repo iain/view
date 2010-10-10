@@ -61,15 +61,14 @@ module View
   # gem should be done through this method (notwithstanding custom formatters).
   #
   # In every day usage you will access it through the +view+ helper method,
-  # because most formatters require a view to render links or images. Any
-  # helper method should also point to this method.
+  # because most formatters require a view to render links or images.
   #
   # @see View::Helper#view
   #
   # @example Rendering a link
   #   module PostsHelper
   #     def link_to_post
-  #       View.format @post, :as => :link, self
+  #       View.format @post, { :as => :link }, self
   #     end
   #   end
   #
@@ -77,17 +76,15 @@ module View
   # @param [Hash] options Any extra options
   #
   # @option options [Symbol] :as (:auto) The name of the formatter
-  # @option options [Array] :block_arguments (nil) Overrides the arguments passed to
+  # @option options [::Array] :block_arguments ([]) Adds arguments passed to
   #   the block of this method.
   #
   # @param [ActionView::Template] Template the view instance on which to call
   #   helper methods like +link_to+ and +image_tag+.
   #   You need this for many formatters.
   #
-  # @yield [formatted_string] The block will be captured (using the template if
-  #   possible) to alter the formatted string that would otherwise be returned.
-  #   Consider it as a final modifier after the view formatter has done its
-  #   work.
+  # @yield [formatter] The block will be captured (using the template if
+  #   possible) so you can use the formatter in more interesting ways.
   #
   # @return [String] the object formatted to a string
   def self.format(value, options = {}, template = nil, &block)
