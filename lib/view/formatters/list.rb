@@ -1,12 +1,13 @@
 module View
 
+  # @abstract Subclass this for html safe lists with formatted each support.
   class List < Formatter
 
     def to_s
       if all_safe?
-        format.html_safe
+        super.html_safe
       else
-        format
+        super
       end
     end
 

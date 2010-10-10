@@ -14,32 +14,130 @@ module View
     class_inheritable_array :allowed_options
     self.allowed_options = []
 
-    def initialize(value, options = {}, template = nil, &block)
-      @value    = value
-      @options  = options
-      @template = template
-      @block    = block
-    end
-
+    # When you inherit from View::Formatter, the formatters goes on the list,
+    # but in reverse order, so that newer formatters kan override older ones.
     def self.inherited(formatter)
       super
       formatters.unshift(formatter)
     end
 
-    def self.formatters
-      View.formatters ||= []
-    end
-
+    # Specify your own name for the formatter. By default the name of the class
+    # will be used (without any namespacing), but you can override it yourself
+    # by calling this method.
+    #
+    # @example
+    #   class SomeStrangeName < View::Formatter
+    #     as :real_name
+    #   end
+    #
+    #   View.format @foo, :as => :real_name
+    #
+    # @param [Symbol] type The new name of the formatter
     def self.as(type)
       @type = type
     end
 
+    # @return [String] the type of the formatter, either set via +.as+ or
+    #   automatically deducted from the class name.
+    #
+    # @see .as
     def self.type
       @type || name.split('::').last.underscore
     end
 
+    # By default, blank values (nil, empty strings, etc), will override any
+    # formatter you specified. This way empty values are handled globally.
+    # 
+    # If you don't want this, you can either turn it off globally or per
+    # formatter. Call this method to turn it off.
+    #
+    # @example
+    #   class IHandleMyOwnBlank < View::Formatter
+    #     skip_blank_formatter
+    #     # etc...
+    #   end
+    #
+    # @see View.always_format_blank
+    # @see View::Blank
+    def self.skip_blank_formatter
+      @skip_blank_formatter = true
+    end
+
+    # If you didn't specify a format instance method inside specific
+    # formatters, this will raise an error.
+    #
+    # @abstract Subclass and override {#format} to implement your own formatter.
+    # @return [String] the formatted value
+    def format
+      msg <<-MSG.squeeze(' ')
+        The only thing a formatter needs to do is implement the #format method.
+        If you see this error, you forgot to do that for the #{self.class.type} formatter.
+      MSG
+      raise NotImplementedError.new(msg)
+    end
+
+    # The "safe" options that you can toss around to helper methods.
+    #
+    # You can specify which methods are "safe" by white listing or black
+    # listing. White listing takes precedence over black listing.
+    #
+    # To access options that are filtered out, use +all_options+.
+    # It's generally a good idea to black list options that you use inside your
+    # formatter.
+    #
+    # The options +:as+ and +:block_arguments+ are black listed by default.
+    #
+    # @example White listing:
+    #
+    #   class Sentence < View::Formatter
+    #     self.allowed_options = [ :words_connector, :last_word_connector ]
+    #
+    #     def format
+    #       value.to_sentence(options)
+    #     end
+    #   end
+    #
+    # @example Black listing:
+    #
+    #   class Link < View::Formatter
+    #     self.reserved_options = [ :to ]
+    #
+    #     def format
+    #       template.link_to(value.to_s, all_options[:to], options)
+    #     end
+    #   end
+    #
+    # @return [Hash] filtered options
+    # @see #all_options
+    def options
+      default_options.merge(all_options).delete_if do |key, value|
+        option_not_allowed?(key)
+      end
+    end
+
+    # This calls the format action. You can override it to do something with
+    # the formatted value. This doesn't (and shouldn't) do any formatting
+    # itself.
+    #
+    # @see #format
+    def to_s
+      format
+    end
+
+    # @return All options, unfiltered.
+    # @see #options
+    def all_options
+      @options
+    end
+
+    private
+
+    def self.skip_blank_formatter?
+      @skip_blank_formatter && View.always_format_blank
+    end
+
     def self.format(*args, &block)
-      new(*args, &block).format!
+      new(*args, &block).send(:format!)
     end
 
     def format!
@@ -50,26 +148,16 @@ module View
       end
     end
 
-    # @abstract Subclass and override {#format} to implement your own formatter.
-    def format
-      msg <<-MSG.squeeze(' ')
-        The only thing a formatter needs to do is implement the #format method.
-        If you see this error, you forgot to do that for the #{self.class.type} formatter.
-      MSG
-      raise NotImplementedError.new(msg)
+    def self.formatters
+      View.formatters ||= []
     end
 
-    def options
-      default_options.merge(all_options).delete_if do |key, value|
-        option_not_allowed?(key)
-      end
+    def initialize(value, options = {}, template = nil, &block)
+      @value    = value
+      @options  = options
+      @template = template
+      @block    = block
     end
-
-    def to_s
-      format
-    end
-
-    private
 
     def template_can_capture?
       template && template.respond_to?(:capture)
@@ -127,18 +215,6 @@ module View
 
     def blank_formatter
       Blank if !find_formatter.skip_blank_formatter? && value.send(View.blank_check_method)
-    end
-
-    def self.skip_blank_formatter
-      @skip_blank_formatter = true
-    end
-
-    def self.skip_blank_formatter?
-      @skip_blank_formatter && View.always_format_blank
-    end
-
-    def all_options
-      @options
     end
 
   end
