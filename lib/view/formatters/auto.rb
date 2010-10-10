@@ -51,7 +51,7 @@ module View
       View.file_methods.any? { |method| value.respond_to?(method) }
     end
 
-    add :sentence do
+    add View.default_list_formatter do
       value.respond_to?(:each)
     end
 
@@ -60,7 +60,7 @@ module View
     end
 
     add :blank do
-      value.send(View.blank_check_method)
+      value.blank?
     end
 
     add :boolean do

@@ -48,8 +48,8 @@ module View
     # By default, blank values (nil, empty strings, etc), will override any
     # formatter you specified. This way empty values are handled globally.
     # 
-    # If you don't want this, you can either turn it off globally or per
-    # formatter. Call this method to turn it off.
+    # If you don't want this, you can either turn it off per formatter.
+    # Call this method to turn it off.
     #
     # @example
     #   class IHandleMyOwnBlank < View::Formatter
@@ -57,7 +57,6 @@ module View
     #     # etc...
     #   end
     #
-    # @see View.always_format_blank
     # @see View::Blank
     def self.skip_blank_formatter
       @skip_blank_formatter = true
@@ -133,7 +132,7 @@ module View
     private
 
     def self.skip_blank_formatter?
-      @skip_blank_formatter && View.always_format_blank
+      @skip_blank_formatter
     end
 
     def self.format(*args, &block)
@@ -214,7 +213,7 @@ module View
     end
 
     def blank_formatter
-      Blank if !find_formatter.skip_blank_formatter? && value.send(View.blank_check_method)
+      Blank if !find_formatter.skip_blank_formatter? && value.blank?
     end
 
   end

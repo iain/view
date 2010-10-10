@@ -33,15 +33,6 @@ module View
     # from View::Formatter.
     attr_accessor :formatters
 
-    # If true, before any other formatter, check to see if the value is blank,
-    # and use the blank formatter if it is. (default is true).
-    # Individual formatters can override this
-    attr_accessor :always_format_blank
-
-    # The method used to check if an object is blank. Defaults to :blank?, but
-    # can also be something like :nil?
-    attr_accessor :blank_check_method
-
     # Shorthand for configuring this gem.
     #
     # @example In +config/initializers/view.rb+
@@ -64,8 +55,6 @@ module View
   self.path_arguments         = []
   self.default_formatter      = :auto
   self.default_list_formatter = :sentence
-  self.always_format_blank    = true
-  self.blank_check_method     = :blank?
 
 
   # This is the main method to use this gem. Any formatting from outside this
