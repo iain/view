@@ -1,5 +1,9 @@
 module View
 
+  # This formatter is the fallback formatter for auto. It figures out which
+  # method will be called to get a proper version to render.
+  #
+  # @see View.guessing_methods
   class Guess < Formatter
 
     def format
