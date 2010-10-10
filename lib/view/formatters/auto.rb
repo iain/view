@@ -43,16 +43,16 @@ module View
       as ? as[:formatter] : :guess
     end
 
+    add View.default_list_formatter do
+      value.respond_to?(:each)
+    end
+
     add :datetime do
       value.respond_to?(:strftime)
     end
 
     add :file_link do
       View.file_methods.any? { |method| value.respond_to?(method) }
-    end
-
-    add View.default_list_formatter do
-      value.respond_to?(:each)
     end
 
     add :link do

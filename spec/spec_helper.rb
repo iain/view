@@ -3,6 +3,7 @@ require "bundler/setup"
 Bundler.setup :default
 require 'active_support'
 require 'active_support/core_ext'
+require 'action_view'
 require 'rspec'
 require 'view'
 
@@ -17,6 +18,24 @@ module WithTranslation
   end
 end
 
+
+module TemplateHelper
+
+  # make it act like a helper spec
+  def helper
+    @helper ||= Template.new
+  end
+
+  class Template
+
+    include ActionView::Helpers
+    include View::Helper
+
+  end
+
+end
+
 RSpec.configure do |config|
   config.include(WithTranslation)
+  config.include(TemplateHelper)
 end
