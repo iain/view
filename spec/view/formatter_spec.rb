@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "View" do
+describe "View::Formatter" do
 
   it "doesn't touch strings" do
     View.format("bar").should == "bar"
