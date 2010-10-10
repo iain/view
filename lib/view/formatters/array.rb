@@ -1,7 +1,7 @@
 module View
 
   # @abstract Subclass this for html safe lists with formatted each support.
-  class List < Formatter
+  class Array < Formatter
 
     def to_s
       if all_safe?
