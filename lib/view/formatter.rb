@@ -84,11 +84,11 @@ module View
     end
 
     def captured_value_by_template
-      template.capture(formatted_value, *block_arguments, &block)
+      template.capture(*block_arguments, &block)
     end
 
     def captured_return_value
-      block.call(formatted_value, *block_arguments)
+      block.call(*block_arguments)
     end
 
     def formatted_value
@@ -118,7 +118,7 @@ module View
     end
 
     def block_arguments
-      all_options[:block_arguments] || []
+      all_options[:block_arguments] || [ formatted_value ]
     end
 
     def as
