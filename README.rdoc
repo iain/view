@@ -1,5 +1,7 @@
 = View
 
+{Source}[http://github.com/iain/view] | {Documentation}[http://rubydoc.info/github/iain/view/master/frames]
+
 Automatic viewer. Very configurable. Very flexible. Very alpha (for now).
 
 It is made for displaying stuff in views. This can be very handy for DSLs that create views.
@@ -11,7 +13,7 @@ But first, the view!
 
 Use it from your views:
 
-  = view @post
+  <%= view @post %>
 
 View will try to figure out what the most logical way is to present the object you passed in.
 If the @post object has a title for instance, it will use that.
@@ -29,49 +31,50 @@ It is a helper for the view part of your application after all.
 
 View will automatically try to choose the proper formatter. You can specify a formatter yourself:
 
-  = view @post.created_at, :as => :date
+  <%= view @post.created_at, :as => :date %>
 
 You can add a block to specify your own behavior. The parsed value is passed in as a block-variable.
 
-  = view @post.author do |author|
-    = link_to author, @post.author
+  <%= view @post.author do |author| %>
+    <%= link_to author, @post.author %>
+  <% end %>
 
 Most formatters pass their options down to the method they use, such as the image formatter:
 
-  = view @user.avatar, :as => :image, :size => "40x40", :class => "avatar"
+  <%= view @user.avatar, :as => :image, :size => "40x40", :class => "avatar" %>
 
 == Examples
 
 There are many formatters included (18 and counting), but here are some interesting use cases of some of them.
 
   # Options are passed to the helper methods:
-  = view @post, :as => :link, :method => :delete, :confirm => "are you sure?"
+  view @post, :as => :link, :method => :delete, :confirm => "are you sure?"
 
   # Renders a link to the edit_page of the post:
-  = view @post, :as => :link, :path => [ :edit ]
+  view @post, :as => :link, :path => [ :edit ]
 
   # Renders a sentence of links:
-  = view Post.all, :each => { :as => :link }
+  view Post.all, :each => { :as => :link }
 
   # When using paperclip, renders the image:
-  = view @project.logo, :as => :image
+  view @project.logo, :as => :image
 
   # Renders "yes" or "no" (with I18n support!)
-  = view @user.admin?
+  view @user.admin?
 
 See the formatters in lib/views/formatters to see their full documentation.
 
 == Adding formatters
 
-You can add a formatter by inheriting from <code>View::Formatter</code>.
-The only method you need to implement is the <code>to_s</code> method.
+You can add a formatter by inheriting from +View::Formatter+.
+The only method you need to implement is the +to_s+ method.
 
 In the class you have access to the following methods:
 
-* <code>value</code>: the object passed in
-* <code>options</code>: a filtered hash of options
-* <code>all_options</code>: the unfiltered hash
-* <code>template</code>: call methods like link_to on this
+* +value+: the object passed in
+* +options+: a filtered hash of options
+* +all_options+: the unfiltered hash
+* +template+: call methods like link_to on this
 
 If you wanted a uppercase formatter for example, you could do this:
 
@@ -85,7 +88,7 @@ If you wanted a uppercase formatter for example, you could do this:
 
 The name of the formatter is automatically infered from the name of the class.
 
-You can use the <code>.as</code> method to specify a different name.
+You can use the +.as+ method to specify a different name.
 
   class Foo < View::Formatter
     as :bar
@@ -99,7 +102,7 @@ You can control which options are allowed, by adding reserved options:
   end
 
 Now, the options method will return the options passed by the user, minus foo and bar.
-To use them, in your code, use the <code>all_options</code> method.
+To use them, in your code, use the +all_options+ method.
 This is done to easily pass the options to another method, without cluttering:
 
   class Paragraph < View::Formatter
@@ -121,33 +124,15 @@ You can use the existing formatters as examples.
 
 == Configuration:
 
-See <code>lib/view.rb</code> for information on configuration.
+See +lib/view.rb+ for information on configuration.
 
 == Installation
 
-=== Rails 3
-
-In Rails 3, just add it to your Gemfile:
+Just add it to your Gemfile:
 
   gem 'view'
 
-Run <code>bundle install</code> and you're ready to go!
-
-=== Rails 2
-
-In Rails 2, add it to app/environment.rb:
-
-  config.gem 'view'
-
-And run <code>rake gems:install</code> to get it.
-
-Afterwards, include the helper manually, by editing <code>app/helpers/application_helper.rb</code>:
-
-  module ApplicationHelper
-    include View::Helper
-  end
-
-Caution: some formatters may use new helper methods from Rails 3 and might not work in Rails 2.
+Run +bundle install+ and you're ready to go!
 
 == Contributing
 
