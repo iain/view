@@ -92,23 +92,21 @@ module View
     end
 
     def formatted_value
+      formatter_not_found unless formatter
       formatter.new(value, all_options, template, &block).to_s
     end
 
     def formatter
-      find_formatter || formatter_not_found
+      blank_formatter || find_formatter
     end
 
     def formatter_not_found
+      formatter_names = self.class.formatters.map { |formatter| formatter.type.to_s }
       raise "Couldn't find the #{as} formatter. Got: #{formatter_names.join(', ')}"
     end
 
-    def formatter_names
-      self.class.formatters.map { |formatter| formatter.type.to_s }
-    end
-
     def find_formatter
-      self.class.formatters.find { |formatter| formatter.type.to_s == as.to_s }
+      @formatter ||= self.class.formatters.find { |formatter| formatter.type.to_s == as.to_s }
     end
 
     def option_not_allowed?(key)
@@ -125,6 +123,18 @@ module View
 
     def as
       all_options[:as] || View.default_formatter
+    end
+
+    def blank_formatter
+      Blank if !find_formatter.skip_blank_formatter? && value.send(View.blank_check_method)
+    end
+
+    def self.skip_blank_formatter
+      @skip_blank_formatter = true
+    end
+
+    def self.skip_blank_formatter?
+      @skip_blank_formatter && View.always_format_blank
     end
 
     def all_options

@@ -2,7 +2,9 @@ module View
 
   class Auto < Formatter
 
-    FORMATS = %W[nil boolean file_link datetime sentence link guess]
+    skip_blank_formatter
+
+    FORMATS = %W[boolean blank file_link datetime sentence link guess]
 
     def format
       format!
@@ -22,7 +24,7 @@ module View
       value == true || value == false
     end
 
-    def nil_format?
+    def blank_format?
       value.nil?
     end
 
