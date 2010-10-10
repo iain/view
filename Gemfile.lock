@@ -85,8 +85,8 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  i18n (~> 0.4.1)
+  i18n
   rails (~> 3.0.0)
   rake
-  rspec (= 2.0.0.rc)
+  rspec (~> 2.0.0.rc)
   view!
