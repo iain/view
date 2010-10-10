@@ -2,13 +2,13 @@ module View
 
   class Auto < Formatter
 
+    FORMATS = %W[nil boolean file_link datetime sentence link guess]
+
     def to_s
-      if as
-        format
-      else
-        guess
-      end
+      format
     end
+
+    private
 
     def datetime_format?
       value.respond_to?(:strftime)
@@ -34,14 +34,14 @@ module View
       all_options[:to]
     end
 
-    def as
-      %w|nil boolean file_link datetime sentence link|.find { |type| send("#{type}_format?") }
+    # We can always guess, so this returns true.
+    # It is a last resort.
+    def guess_format?
+      true
     end
 
-    def guess
-      View.guessing_methods.each do |method|
-        return value.send(method) if value.respond_to?(method)
-      end
+    def as
+      FORMATS.find { |type| send("#{type}_format?") }
     end
 
   end
