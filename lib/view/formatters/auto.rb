@@ -1,49 +1,70 @@
 module View
 
+  # The auto formatter tries to figure out what other formatter should be the
+  # most appropriate to use and delegates the formatting to that formatter.
+  #
+  # This is fully configurable too. See Auto.add
   class Auto < Formatter
 
     skip_blank_formatter
 
-    FORMATS = %W[boolean blank file_link datetime sentence link guess]
+    # Adds behavior to check which view should automatically be used.
+    #
+    # @example
+    #
+    #   View::Auto.add :boolean do
+    #     value == true || value == false
+    #   end
+    #
+    # @param [Symbol] formatter_name The name of the formatter
+    #
+    # @yield The block is eval'd inside the formatter, so you can use the
+    #   instance methods that are available for every formatters, like +value+
+    #   and +options+.
+    #
+    # @yieldreturn [true, false] The first block to evaluate to true will
+    #   determine the formatter. New blocks are checked first.
+    def self.add(formatter_name, &block)
+      auto_formatters.unshift(:formatter => formatter_name, :block => block)
+    end
+
+    private
 
     def format
       format!
     end
 
-    private
-
-    def datetime_format?
-      value.respond_to?(:strftime)
-    end
-
-    def file_link_format?
-      View.file_methods.any? { |method| value.respond_to?(method) }
-    end
-
-    def boolean_format?
-      value == true || value == false
-    end
-
-    def blank_format?
-      value.nil?
-    end
-
-    def sentence_format?
-      value.respond_to?(:each)
-    end
-
-    def link_format?
-      all_options[:to]
-    end
-
-    # We can always guess, so this returns true.
-    # It is a last resort.
-    def guess_format?
-      true
+    def self.auto_formatters
+      @auto_formatters ||= []
     end
 
     def as
-      FORMATS.find { |type| send("#{type}_format?") }
+      as = self.class.auto_formatters.find { |auto| instance_eval(&auto[:block]) }
+      as ? as[:formatter] : :guess
+    end
+
+    add :datetime do
+      value.respond_to?(:strftime)
+    end
+
+    add :file_link do
+      View.file_methods.any? { |method| value.respond_to?(method) }
+    end
+
+    add :sentence do
+      value.respond_to?(:each)
+    end
+
+    add :link do
+      all_options.has_key?(:to)
+    end
+
+    add :blank do
+      value.send(View.blank_check_method)
+    end
+
+    add :boolean do
+      value == true || value == false
     end
 
   end

@@ -2,24 +2,21 @@ require 'spec_helper'
 
 describe "Auto formatter" do
 
-  it "guesses the to_label" do
-    object = Struct.new(:to_label).new("some label")
-    View.format(object).should == "some label"
+  it "formats like a boolean automatically" do
+    View.format(true).should == "Yes"
   end
 
-  it "guesses to_s" do
-    object = Struct.new(:to_s).new("string")
-    View.format(object).should == "string"
-  end
-
-  it "guesses a name" do
-    object = Struct.new(:name).new("my name")
-    View.format(object).should == "my name"
-  end
-
-  it "guesses a login" do
-    object = Struct.new(:login).new("loginname")
-    View.format(object).should == "loginname"
+  it "is configurable" do
+    foo = Class.new(View::Formatter) do
+      as :foo
+      def format
+        "!!!#{value}!!!"
+      end
+    end
+    View::Auto.add :foo do
+      value == "foobar"
+    end
+    View.format("foobar").should == "!!!foobar!!!"
   end
 
 end
