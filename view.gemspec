@@ -13,13 +13,15 @@ Gem::Specification.new do |s|
   s.summary           = "Displaying objects automatically"
   s.description       = "A very extensible way of viewing objects, easily integrated with other gems"
 
-  s.rubyforge_project = "view"
+  s.rubyforge_project = s.name
 
   s.require_path      = "lib"
 
   s.files             = Dir["lib/**/*.rb"] + ['init.rb']
   s.test_files        = Dir["spec/**/*"]
   s.extra_rdoc_files  = ["README.rdoc"]
+
+  s.add_dependency "rails", "~> 3.0.0"
 
   s.required_rubygems_version = ">= 1.3.6"
 end
