@@ -4,7 +4,7 @@ module View
 
     self.reserved_options = [ :with ]
 
-    def to_s
+    def format
       template.image_tag(path, options) if file?
     end
 

@@ -4,7 +4,7 @@ module View
 
     self.allowed_options = [ :area_code, :delimiter, :extension, :country_code ]
 
-    def to_s
+    def format
       template.number_to_phone(value, options)
     end
 

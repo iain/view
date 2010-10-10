@@ -4,7 +4,7 @@ module View
 
     self.allowed_options = [ :precision, :unit, :separator, :delimiter, :format ]
 
-    def to_s
+    def format
       template.number_to_currency(value, options)
     end
 

@@ -2,7 +2,7 @@ module View
 
   class Date < Formatter
 
-    def to_s
+    def format
       ::I18n.l(value.to_date, options) if value.present?
     end
 

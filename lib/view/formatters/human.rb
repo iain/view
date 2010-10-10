@@ -7,7 +7,7 @@ module View
     self.allowed_options = [ :locale, :precision, :significant, :separator, :delimiter,
       :strip_insignificant_zeros, :units, :format ]
 
-    def to_s
+    def format
       template.number_to_human(value, options)
     end
 

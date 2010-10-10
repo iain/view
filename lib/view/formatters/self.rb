@@ -2,7 +2,7 @@ module View
 
   class Self < Formatter
 
-    def to_s
+    def format
       value
     end
 

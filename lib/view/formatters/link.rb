@@ -4,7 +4,7 @@ module View
 
     self.reserved_options = [ :to, :path, :text ]
 
-    def to_s
+    def format
       template.link_to(format, to, options)
     end
 

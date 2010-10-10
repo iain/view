@@ -69,7 +69,7 @@ module View
   # @example Rendering a link
   #   module PostsHelper
   #     def link_to_post
-  #       View.to_s @post, :as => :link, self
+  #       View.format @post, :as => :link, self
   #     end
   #   end
   #
@@ -90,8 +90,8 @@ module View
   #   work.
   #
   # @return [String] the object formatted to a string
-  def self.to_s(value, options = {}, template = nil, &block)
-    Formatter.to_s(value, options, template, &block)
+  def self.format(value, options = {}, template = nil, &block)
+    Formatter.format(value, options, template, &block)
   end
 
 end

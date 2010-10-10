@@ -5,7 +5,7 @@ module View
     self.reserved_options = [ :text, :text_method ]
     self.default_options = { :target => "_blank" }
 
-    def to_s
+    def format
       template.link_to(text, path, options)
     end
 

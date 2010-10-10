@@ -1,5 +1,6 @@
 module View
 
+  # @abstract Subclass and override {#format} to implement your own formatter.
   class Formatter
 
     attr_reader :value, :template, :block
@@ -37,11 +38,11 @@ module View
       @type || name.split('::').last.underscore
     end
 
-    def self.to_s(*args, &block)
-      new(*args, &block).format
+    def self.format(*args, &block)
+      new(*args, &block).format!
     end
 
-    def format
+    def format!
       if block
         captured_value
       else
@@ -49,9 +50,10 @@ module View
       end
     end
 
-    def to_s
+    # @abstract Subclass and override {#format} to implement your own formatter.
+    def format
       msg <<-MSG.squeeze(' ')
-        The only thing a formatter needs to do is implement the #to_s method.
+        The only thing a formatter needs to do is implement the #format method.
         If you see this error, you forgot to do that for the #{self.class.type} formatter.
       MSG
       raise NotImplementedError.new(msg)
@@ -61,6 +63,10 @@ module View
       default_options.merge(all_options).delete_if do |key, value|
         option_not_allowed?(key)
       end
+    end
+
+    def to_s
+      format
     end
 
     private

@@ -4,7 +4,7 @@ module View
 
     self.allowed_options = [ :separator, :delimiter ]
 
-    def to_s
+    def format
       template.number_with_delimiter(value, options)
     end
 

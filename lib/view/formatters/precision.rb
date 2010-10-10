@@ -4,7 +4,7 @@ module View
 
     self.allowed_options = [ :precision, :separator, :delimiter ]
 
-    def to_s
+    def format
       template.number_with_precision(value, options)
     end
 

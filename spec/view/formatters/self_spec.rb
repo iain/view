@@ -4,7 +4,7 @@ describe "Self formatter" do
 
   it "doesn't format with formatter self" do
     time = Time.now
-    View.to_s(time, :as => :self).should == time
+    View.format(time, :as => :self).should == time
   end
 
 end

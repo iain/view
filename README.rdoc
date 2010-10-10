@@ -22,7 +22,7 @@ See the auto formatter for more information.
 
 You can use view anywhere you like:
 
-  puts View.to_s(@post)
+  puts View.format(@post)
 
 But beware that for many formatters, a reference to the template is required.
 It is a helper for the view part of your application after all.
@@ -67,7 +67,7 @@ See the formatters in lib/views/formatters to see their full documentation.
 == Adding formatters
 
 You can add a formatter by inheriting from +View::Formatter+.
-The only method you need to implement is the +to_s+ method.
+The only method you need to implement is the +format+ method.
 
 In the class you have access to the following methods:
 
@@ -80,7 +80,7 @@ If you wanted a uppercase formatter for example, you could do this:
 
   class Uppercase < View::Formatter
 
-    def to_s
+    def format
       value.to_s.upcase
     end
 
@@ -106,7 +106,7 @@ To use them, in your code, use the +all_options+ method.
 This is done to easily pass the options to another method, without cluttering:
 
   class Paragraph < View::Formatter
-    def to_s
+    def format
       template.content_tag(:p, value.to_s, options)
     end
   end
@@ -115,7 +115,7 @@ To more tightly control which options are allowed, specify the allowed options:
 
   class Size < View::Formatter
     self.allowed_options = [ :separator, :delimiter, :precision ]
-    def to_s
+    def format
       template.number_to_human_size(value, options)
     end
   end

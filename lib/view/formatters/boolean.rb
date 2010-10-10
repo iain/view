@@ -2,7 +2,7 @@ module View
 
   class Boolean < Formatter
 
-    def to_s
+    def format
       ::I18n.t(boolean_value.to_s, :scope => [:view, :booleans], :default => default)
     end
 

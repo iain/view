@@ -2,7 +2,7 @@ module View
 
   class HtmlSafe < Formatter
 
-    def to_s
+    def format
       value.to_s.html_safe
     end
 

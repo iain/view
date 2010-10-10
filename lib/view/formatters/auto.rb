@@ -4,8 +4,8 @@ module View
 
     FORMATS = %W[nil boolean file_link datetime sentence link guess]
 
-    def to_s
-      format
+    def format
+      format!
     end
 
     private
@@ -27,7 +27,7 @@ module View
     end
 
     def sentence_format?
-      value.respond_to?(:to_sentence)
+      value.respond_to?(:each)
     end
 
     def link_format?
