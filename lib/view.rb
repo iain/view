@@ -92,3 +92,5 @@ module View
   end
 
 end
+
+require 'view/railtie'

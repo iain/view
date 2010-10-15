@@ -1,8 +1,7 @@
 require "rubygems"
 require "bundler/setup"
 Bundler.setup :default
-require 'active_support'
-require 'active_support/core_ext'
+require 'rails'
 require 'action_view'
 require 'rspec'
 require 'view'
