@@ -3,6 +3,7 @@ require "bundler/setup"
 Bundler.setup :default
 require 'rails'
 require 'action_view'
+require 'action_view/template/handlers/erb'
 require 'rspec'
 require 'view'
 
@@ -25,11 +26,8 @@ module TemplateHelper
     @helper ||= Template.new
   end
 
-  class Template
-
-    include ActionView::Helpers
+  class Template < ActionView::Base
     include View::Helper
-
   end
 
 end
