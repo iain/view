@@ -160,7 +160,7 @@ module View
 
     def formatted_value
       formatter_not_found unless formatter
-      formatter.new(value, all_options, template, &block).format!
+      formatter.new(value, all_options, template, &block).send(:format!)
     end
 
     def template_can_capture?
