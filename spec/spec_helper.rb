@@ -32,6 +32,29 @@ module WithTranslation
 
 end
 
+# Make a fake Rails application, to test rendering partials
+class RailsApplication
+
+  def root
+    File.expand_path('../../', __FILE__)
+  end
+
+  def config
+    Struct.new(:root, :cache_classes).new(root, false)
+  end
+
+  # This runs before every spec
+  def before(context)
+    Rails.stub(:application).and_return(self)
+    ActionView::Template.register_default_template_handler :erb, ActionView::Template::Handlers::ERB
+    context.helper.view_paths = view_paths
+  end
+
+  def view_paths
+    [ File.join(root, 'app', 'views') ]
+  end
+
+end
 
 module TemplateHelper
 
@@ -50,4 +73,7 @@ end
 RSpec.configure do |config|
   config.include(WithTranslation)
   config.include(TemplateHelper)
+  config.before do
+    RailsApplication.new.before(self)
+  end
 end

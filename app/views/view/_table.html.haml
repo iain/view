@@ -1,0 +1,10 @@
+%table
+  %thead
+    %tr
+      - table.columns.each do |column|
+        %th{column.html_options}= column.name
+  %tbody
+    - table.each do |row|
+      %tr{:class => cycle("odd", "even")}
+        - row.each do |cell|
+          %td{html_options}= cell.value

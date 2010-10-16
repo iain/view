@@ -13,7 +13,7 @@ module View
     end
 
     def automatic_link
-      (all_options[:path] || []) + [ value ]
+      Array.wrap(all_options[:path]) + [ value ]
     end
 
     def as
