@@ -41,10 +41,14 @@ module View
   #
   #   = view @posts, :as => :table, :partial => "shared/fancy_table"
   #
+  # @example Change the partial globally:
+  #
+  #   View::Table.partial = "shared/fancy_table"
+  #
   class Table < Formatter
 
     class_inheritable_accessor :partial
-    self.partial = 'view/table'
+    self.partial = 'shared/table'
 
     self.reserved_options = [ :partial, :class ]
 
