@@ -33,4 +33,80 @@ describe "Table formatter" do
     HTML
   end
 
+  it "renders links when the link option is used" do
+    helper.instance_eval do
+      def polymorphic_path(opts)
+        "link"
+      end
+    end
+    collection = [ Struct.new(:foo).new("Fooz") ]
+    html = helper.view collection, :as => :table do |tb|
+      tb.view :foo, :as => :link
+    end
+    html.squish.should == <<-HTML.squish
+      <table>
+        <thead>
+          <tr>
+            <th class="foo">Foo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="odd">
+            <td class="foo"><a href="link">Fooz</a></td>
+          </tr>
+        </tbody>
+      </table>
+    HTML
+  end
+
+  it "renders links when the path option is used" do
+    helper.instance_eval do
+      def polymorphic_path(opts)
+        "link"
+      end
+    end
+    collection = [ Struct.new(:foo).new("Fooz") ]
+    html = helper.view collection, :as => :table do |tb|
+      tb.view :foo, :path => :edit
+    end
+    html.squish.should == <<-HTML.squish
+      <table>
+        <thead>
+          <tr>
+            <th class="foo">Foo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="odd">
+            <td class="foo"><a href="link">Fooz</a></td>
+          </tr>
+        </tbody>
+      </table>
+    HTML
+  end
+
+  it "renders fields" do
+    helper.instance_eval do
+      def polymorphic_path(opts)
+        "link"
+      end
+    end
+    collection = [ Struct.new(:foo).new("Fooz") ]
+    html = helper.view collection, :as => :table, :fields => [ :foo ]
+    html.squish.should == <<-HTML.squish
+      <table>
+        <thead>
+          <tr>
+            <th class="foo">Foo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="odd">
+            <td class="foo">Fooz</td>
+          </tr>
+        </tbody>
+      </table>
+    HTML
+  end
+
 end
