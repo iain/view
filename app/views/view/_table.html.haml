@@ -7,4 +7,4 @@
     - table.each do |row|
       %tr{:class => cycle("odd", "even")}
         - row.each do |cell|
-          %td{html_options}= cell.value
+          %td{cell.html_options}= cell.value

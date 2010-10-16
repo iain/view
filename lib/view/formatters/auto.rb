@@ -59,6 +59,10 @@ module View
       all_options.has_key?(:to)
     end
 
+    add :self do
+      value.is_a?(String)
+    end
+
     add :blank do
       value.blank?
     end

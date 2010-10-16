@@ -5,7 +5,7 @@ module View
     self.reserved_options = [ :to, :path, :text ]
 
     def format
-      template.link_to(format, to, options)
+      template.link_to(text, to, options)
     end
 
     def to
@@ -13,11 +13,15 @@ module View
     end
 
     def automatic_link
-      Array.wrap(all_options[:path]) + [ value ]
+      ::Array.wrap(all_options[:path]) + [ value ]
+    end
+
+    def text
+      all_options[:text] || format
     end
 
     def as
-      all_options[:text] || :auto
+      :guess
     end
 
   end

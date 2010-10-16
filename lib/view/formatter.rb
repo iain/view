@@ -9,7 +9,7 @@ module View
     self.default_options = {}
 
     class_inheritable_array :reserved_options
-    self.reserved_options = [ :as, :block_arguments ]
+    self.reserved_options = [ :as ]
 
     class_inheritable_array :allowed_options
     self.allowed_options = []
@@ -47,7 +47,7 @@ module View
 
     # By default, blank values (nil, empty strings, etc), will override any
     # formatter you specified. This way empty values are handled globally.
-    # 
+    #
     # If you don't want this, you can either turn it off per formatter.
     # Call this method to turn it off.
     #
@@ -81,7 +81,7 @@ module View
     # It's generally a good idea to black list options that you use inside your
     # formatter.
     #
-    # The options +:as+ and +:block_arguments+ are black listed by default.
+    # The option +:as+ is black listed by default.
     #
     # @example White listing:
     #
@@ -176,11 +176,11 @@ module View
     end
 
     def captured_value_by_template
-      template.capture(self, *block_arguments, &block)
+      template.capture(self, &block)
     end
 
     def captured_return_value
-      block.call(self, *block_arguments)
+      block.call(self)
     end
 
     def formatter
@@ -202,10 +202,6 @@ module View
       else
         !allowed_options.map(&:to_s).include?(key.to_s)
       end
-    end
-
-    def block_arguments
-      all_options[:block_arguments] || []
     end
 
     def as

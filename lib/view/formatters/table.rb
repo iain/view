@@ -57,6 +57,7 @@ module View
     #   value
     def view(attribute, options = {}, &block)
       columns << Column.new(attribute, options, block, self)
+      nil
     end
 
     # The columns defined
@@ -68,13 +69,13 @@ module View
     # Iterates over the collection and yields rows.
     # @yield [Row]
     def each
-      value.each do |resource|
-        yield Row.new(resource, self)
+      value.each_with_index do |resource, index|
+        yield Row.new(resource, self, index)
       end
     end
 
     def resource_class
-      all_options[:class] || value.first
+      all_options[:class] || value.first.class
     end
 
     protected
@@ -99,16 +100,12 @@ module View
     private
 
     def all_fields
-      value_class.respond_to?(:column_names) ? value_class.column_names : []
-    end
-
-    def value_class
-      value.class
+      resource_class.respond_to?(:column_names) ? resource_class.column_names : []
     end
 
     def format!
       super
-      template.render(:partial => partial, :locals => {:table => self})
+      template.render(partial, :table => self)
     end
 
     class Column < Struct.new(:attribute, :options, :block, :table)
@@ -135,7 +132,7 @@ module View
 
     end
 
-    class Row < Struct.new(:resource, :table)
+    class Row < Struct.new(:resource, :table, :index)
 
       # Loops through all columns and yields cells.
       #
