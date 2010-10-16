@@ -86,11 +86,6 @@ describe "Table formatter" do
   end
 
   it "renders fields" do
-    helper.instance_eval do
-      def polymorphic_path(opts)
-        "link"
-      end
-    end
     collection = [ Struct.new(:foo).new("Fooz") ]
     html = helper.view collection, :as => :table, :fields => [ :foo ]
     html.squish.should == <<-HTML.squish
@@ -103,6 +98,30 @@ describe "Table formatter" do
         <tbody>
           <tr class="odd">
             <td class="foo">Fooz</td>
+          </tr>
+        </tbody>
+      </table>
+    HTML
+  end
+
+  it "renders a link on a field" do
+    helper.instance_eval do
+      def polymorphic_path(opts)
+        "link"
+      end
+    end
+    collection = [ Struct.new(:foo).new("Fooz") ]
+    html = helper.view collection, :as => :table, :fields => [ :foo ], :link => "foo"
+    html.squish.should == <<-HTML.squish
+      <table>
+        <thead>
+          <tr>
+            <th class="foo">Foo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="odd">
+            <td class="foo"><a href="link">Fooz</a></td>
           </tr>
         </tbody>
       </table>

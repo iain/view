@@ -45,12 +45,14 @@ module View
   #
   #   View::Table.partial = "shared/fancy_table"
   #
+  # @example Linking a column, without passing a block:
+  #
+  #   = view @posts, :as => :table, :link => :title
+  #
   class Table < Formatter
 
     class_inheritable_accessor :partial
     self.partial = 'shared/table'
-
-    self.reserved_options = [ :partial, :class ]
 
     # This will add the th and td tags.
     #
@@ -179,6 +181,14 @@ module View
       end
 
       def link?
+        has_link_options? || global_link_column?
+      end
+
+      def global_link_column?
+        table.all_options[:link].to_s == attribute.to_s
+      end
+
+      def has_link_options?
         all_options[:as] == :link || (!all_options[:as] && all_options[:path])
       end
 
