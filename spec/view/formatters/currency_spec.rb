@@ -3,12 +3,8 @@ require 'spec_helper'
 
 describe "Currency formatter" do
 
-  before do
-    helper.stub(:number_to_currency).and_return("called")
-  end
-
   it "calls number_to_currency" do
-    helper.view(19.99, :as => :currency).should == "called"
+    helper.view(19.99, :as => :currency).should == "$19.99"
   end
 
   it "allowes no other options" do

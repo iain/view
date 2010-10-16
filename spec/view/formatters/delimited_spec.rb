@@ -2,12 +2,8 @@ require 'spec_helper'
 
 describe "Delimited formatter" do
 
-  before do
-    helper.stub(:number_with_delimiter).and_return("called")
-  end
-
   it "calls number_with_delimiter" do
-    helper.view(19.99, :as => :delimited).should == "called"
+    helper.view(19_999.99, :as => :delimited).should == "19,999.99"
   end
 
   it "allowes no other options" do
