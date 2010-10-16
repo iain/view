@@ -47,7 +47,8 @@ module View
   #
   # @example Linking a column, without passing a block:
   #
-  #   = view @posts, :as => :table, :link => :title
+  #   = view @posts, :as => :table,
+  #     :link => :title, :link_options => { :path => :edit }
   #
   class Table < Formatter
 
@@ -193,7 +194,11 @@ module View
       end
 
       def link_options
-        link? ? { :text => original_value, :as => :link } : {}
+        link? ? table_link_options.merge(:text => original_value, :as => :link) : {}
+      end
+
+      def table_link_options
+        table.all_options[:link_options] || {}
       end
 
     end
