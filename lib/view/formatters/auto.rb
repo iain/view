@@ -43,7 +43,7 @@ module View
       as ? as[:formatter] : :guess
     end
 
-    add View.default_list_formatter do
+    add View.configuration.default_list_formatter do
       value.respond_to?(:each)
     end
 
@@ -52,7 +52,7 @@ module View
     end
 
     add :file_link do
-      View.file_methods.any? { |method| value.respond_to?(method) }
+      View.configuration.file_methods.any? { |method| value.respond_to?(method) }
     end
 
     add :link do

@@ -27,7 +27,7 @@ module View
     end
 
     def each_options
-      all_options[:each] || { :as => View.default_formatter }
+      all_options[:each] || { :as => View.configuration.default_formatter }
     end
 
   end

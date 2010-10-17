@@ -58,11 +58,11 @@ module View
     # TODO I'm only guessing here, I don't actually know how other upload gems
     # work, besides paperclip.
     def path_method
-      View.path_methods.find { |method| value.respond_to?(method) }
+      View.configuration.path_methods.find { |method| value.respond_to?(method) }
     end
 
     def path_arguments
-      all_options[:style] || View.path_arguments
+      all_options[:style] || View.configuration.path_arguments
     end
 
     def file?
@@ -70,7 +70,7 @@ module View
     end
 
     def file_method
-      View.file_methods.find { |method| value.respond_to?(method) }
+      View.configuration.file_methods.find { |method| value.respond_to?(method) }
     end
 
   end

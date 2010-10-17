@@ -25,7 +25,7 @@ module View
     end
 
     def path
-      View.path_methods.each do |method|
+      View.configuration.path_methods.each do |method|
         return value.send(method) if value.respond_to?(method)
       end
       nil

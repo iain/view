@@ -148,7 +148,7 @@ module View
     end
 
     def self.formatters
-      View.formatters ||= []
+      View.formatters
     end
 
     def initialize(value, options = {}, template = nil, &block)
@@ -205,7 +205,7 @@ module View
     end
 
     def as
-      all_options[:as] || View.default_formatter
+      all_options[:as] || View.configuration.default_formatter
     end
 
     def blank_formatter
