@@ -7,7 +7,7 @@ describe "Phone formatter" do
     helper.view(5551234, :as => :phone).should == "555-1234"
   end
 
-  it "allowes no other options" do
+  it "allows no other options" do
     helper.should_receive(:number_to_phone).with(5551234, {})
     helper.view(5551234, :as => :phone, :foo => "bar")
   end

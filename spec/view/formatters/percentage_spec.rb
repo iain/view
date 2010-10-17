@@ -7,7 +7,7 @@ describe "Percentage formatter" do
     helper.view(19.99, :as => :percentage).should == "19.990%"
   end
 
-  it "allowes no other options" do
+  it "allows no other options" do
     helper.should_receive(:number_to_percentage).with(19.99, {})
     helper.view(19.99, :as => :percentage, :foo => "bar")
   end

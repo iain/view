@@ -58,7 +58,7 @@ module View
     yield configuration
   end
 
-  # Conains a list of registered formatters
+  # Contains a list of registered formatters
   def self.formatters
     @formatters ||= []
   end

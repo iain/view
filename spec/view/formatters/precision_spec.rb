@@ -7,7 +7,7 @@ describe "Precision formatter" do
     helper.view(19.99, :as => :precision).should == "19.990"
   end
 
-  it "allowes no other options" do
+  it "allows no other options" do
     helper.should_receive(:number_with_precision).with(19.99, {})
     helper.view(19.99, :as => :precision, :foo => "bar")
   end
