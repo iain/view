@@ -8,6 +8,9 @@ require 'action_view'
 # Needed to make the capture helper work in tests
 require 'action_view/template/handlers/erb'
 
+# We need them all
+require 'active_support/core_ext'
+
 require 'rspec'
 require 'view'
 
