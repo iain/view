@@ -1,5 +1,30 @@
 module View
 
+  # Makes a link of it.
+  #
+  # The text will be determined by a new formatter.
+  #
+  # You can specify a url with the `:to` option.
+  # You can specify part of the polymorphic_path with `:path`.
+  #
+  # @example
+  #
+  #   = view @post, :as => :link
+  #   -# equal to
+  #   = link_to @post.title, @post
+  #
+  # @example
+  #
+  #   = view @post, :as => :link, :path => :edit
+  #
+  # @example
+  #
+  #   = view @post, :as => :link, :to => "http://example.com"
+  #
+  # @example
+  #
+  #   = view @post, :as => :link, :text => "go to the post"
+  #
   class Link < Formatter
 
     self.reserved_options = [ :to, :path, :text ]
@@ -17,11 +42,7 @@ module View
     end
 
     def text
-      all_options[:text] || format
-    end
-
-    def as
-      :guess
+      all_options[:text] || View.format(value, {:as => :auto}, template)
     end
 
   end
