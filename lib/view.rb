@@ -50,8 +50,8 @@ module View
 
   self.guessing_methods       = %w|to_label display_name full_name name title
                                    username login value to_s|
-  self.file_methods           = %w|mounted_as file? public_filename|
-  self.path_methods           = %w|mounted_as url public_filename|
+  self.file_methods           = %w|file? mounted_as public_filename|
+  self.path_methods           = %w|url mounted_as public_filename|
   self.path_arguments         = []
   self.default_formatter      = :auto
   self.default_list_formatter = :sentence

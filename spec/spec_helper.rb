@@ -40,7 +40,7 @@ class RailsApplication
   end
 
   def config
-    Struct.new(:root, :cache_classes).new(root, false)
+    Struct.new(:root, :cache_classes, :assets_dir).new(root, false, root)
   end
 
   # This runs before every spec
@@ -66,6 +66,10 @@ module TemplateHelper
   # emulate a Rails view
   class Template < ActionView::Base
     include View::Helper
+
+    def config
+      Struct.new(:asset_path, :asset_host).new('/', '/')
+    end
   end
 
 end
@@ -76,4 +80,6 @@ RSpec.configure do |config|
   config.before do
     RailsApplication.new.before(self)
   end
+  # Uncomment to see the big backtrace
+  # config.backtrace_clean_patterns = []
 end
