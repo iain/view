@@ -2,79 +2,304 @@
 
 {Source}[http://github.com/iain/view] | {Documentation}[http://rubydoc.info/github/iain/view/master/frames]
 
-Automatic viewer. Very configurable. Very flexible. Very alpha (for now).
+View is a DSL to help you make default representations of objects. It's goal is not to add complex
+logic, but to help you make it really easy to display default elements.
 
-It is made for displaying stuff in views. This can be very handy for DSLs that create views.
-Some of those DSLs are coming soon to a rubygem near you!
+Some features:
 
-But first, the view!
+* View will automatically display your objects as you expect them to be.
+* View is smart about blank objects, so no more checking it in your views.
+* View contains many formatters, some really complex, and is very extensible.
+* View allows for exceptions by using the power of blocks.
+* View is designed to be short and looks at home in HAML.
+* Optional support for InheritedResources.
 
-== Usage
+This gem was inspired by {formtastic}[http://github.com/justinfrench/formtastic] and
+{simple_form}[http://github.com/plataformatec/simple_form]. It has been extracted from the helper
+methods I use regularly myself, but as a gem, View has still a long way to go.
 
-Use it from your views:
+== Installation
 
-  <%= view @post %>
+Just add it to your Gemfile:
+
+  gem 'view'
+
+Run `bundle install` and you're ready to go!
+
+== Basic Usage
+
+It' usually done through the `view` helper method.
+
+  = view @post
 
 View will try to figure out what the most logical way is to present the object you passed in.
 If the @post object has a title for instance, it will use that.
 
-See the auto formatter for more information.
+View will automatically try to choose the proper formatter. The following will use I18n for
+formatting the time correctly:
 
-You can use view anywhere you like:
+  = view @post.created_at
 
-  puts View.format(@post)
+Normally I18n.localize will throw an exception if the value were to be nil, so you'd have to
+check for that yourself. View does this for you.
 
-But beware that for many formatters, a reference to the template is required.
-It is a helper for the view part of your application after all.
+You can specify a formatter yourself:
 
-== Options
-
-View will automatically try to choose the proper formatter. You can specify a formatter yourself:
-
-  <%= view @post.created_at, :as => :date %>
+  = view @post.created_at, :as => :date
 
 You can add a block to specify your own behavior. The formatter is passed in as a block-variable.
+On the formatter the following methods are always available:
 
-  <%= view @post.author do |formatter| %>
-    <%= link_to formatter.to_s, formatter.value %>
-  <% end %>
+* `to_s` gets the formatted result
+* `value` gets the original value
+* `options` will return a (filtered) options hash, complete with defaults
 
-Most formatters pass their options down to the method they use, such as the image formatter:
+Example:
 
-  <%= view @user.avatar, :as => :image, :size => "40x40", :class => "avatar" %>
+  = view @post.author do |formatter|
+    = link_to formatter.to_s, backend_user_path(formatter.value)
+
+Most formatters pass their options down to the method they use, such as the date formatter:
+
+  = view @post.created_at, :format => :short
 
 == Examples
 
-There are many formatters included (18 and counting), but here are some interesting use cases of some of them.
+Now that we've got the basics down, let's continue with some more advanced examples.
+There are a lot of formatters that do very trivial things. This is because they are meant to be
+used inside other formatters. Let's start with some bigger formatters to give you an idea.
 
-  # Options are passed to the helper methods:
-  view @post, :as => :link, :method => :delete, :confirm => "are you sure?"
+=== Table
 
-  # Renders a link to the edit_page of the post:
-  view @post, :as => :link, :path => [ :edit ]
+You can render a table quite easily. If you're displaying a collection of ActiveRecord objects,
+it's even trivial:
 
-  # Renders a sentence of links:
-  view Post.all, :each => { :as => :link }
+  = view @posts, :as => :table
 
-  # When using paperclip, renders the image:
-  view @project.logo, :as => :image
+or even:
 
-  # Renders "yes" or "no" (with I18n support!)
+  = table_for @posts
+
+This will display all columns, properly formatted, as you would expect. All columns might be a bit
+too much, so let's slim the table down:
+
+  = table_for @posts, :fields => [ :title, :author, :published_at ]
+
+Turn the titles into links:
+
+  = table_for @posts, :fields => [ :title, :author, :published_at ], :link => :title
+
+Ok, nice, but this is rather ugly. This list might get very long. Also, what if you want to
+control how certain columns are formatted? The solution is simple: use a block:
+
+  = table_for @posts do |table|
+
+    = table.view :title, :as => :link
+
+    = table.view :author do |formatter|
+      = link_to formatter.to_s, formatter.value
+
+    = table.view :published_at, :as => :date
+
+Now the power of the simple formatters can be fully appreciated.
+
+The table formatter will display a simple table. If you want to control what the table looks like,
+you can add a partial to your application in `app/views/shared/_table.html.haml` (or erb). Since
+this gem is a Rails 3 engine, it will automatically choose your own version over the one provided
+by this gem.
+
+One final note on tables: If you're using the gem
+{InheritedResources}[http://github.com/josevalim/inherited_resources], or something similar, you
+can just call `table` from the index view, and it will automatically use the collection.
+
+  = table
+
+See the {documentation}[http://rubydoc.info/github/iain/view/master/View/Table] for more
+information on tables.
+
+=== Definition lists
+
+You can generate definition lists in rather the same fashion as tables.
+Definition Lists are great for the show pages in a backend.
+
+On it's own:
+
+  = view @post, :as => :definition_list
+
+Or even:
+
+  = definition_list_for @post
+
+Or if you're using InheritedResources:
+
+  = definition_list
+
+You can also specify fields:
+
+  = definition_list_for @post, :fields => [ :title, :author ]
+
+And you can also use a block to go specific:
+
+  = definition_list_for @post do |dl|
+
+    = dl.view :title, :as => :link
+    = dl.view :author
+    = dl.view :published_on, :as => :date
+
+See the {documentation}[http://rubydoc.info/github/iain/view/master/View/DefinitionList] for more
+information on definition lists.
+
+=== Other formatters
+
+No we've seen the biggest formatters, let's look at some smaller ones.
+
+Some of these are longer than their regular Rails counterparts. In that case, remember that
+they can be easily used inside the table or definition list. Most of the common Rails helpers
+have been converted to formatters for that reason.
+
+==== Links
+
+Links can be quite easy:
+
+  = view @post, :as => :link
+
+You can provide options too:
+
+  = view @post, :as => :link, :method => :delete, :confirm => "are you sure?"
+
+And you can link to the specific versions of the page, using the awesome power of Rails'
+`polymorphic_path`.
+
+  = view @post, :as => :link, :path => [ :edit, :backend ]
+
+{Documentation}[http://rubydoc.info/github/iain/view/master/View/Link]
+
+==== Sentences
+
+Create a simple sentence of an array, propery formatting each element:
+
+  = view @post.tags, :as => :sentence
+
+Or even create a sentence of links:
+
+  = view @post.tags, :as => :sentence, :each => { :as => :link }
+
+{Documentation}[http://rubydoc.info/github/iain/view/master/View/Sentence]
+
+==== Images and file links
+
+There is also some support for uploaded files with paperclip.
+
+The following displays the user's (resized) avatar:
+
+  = view @user.avatar, :as => :image, :style => :thumbnail
+
+Or, if it isn't an image:
+
+  = view @project.document, :as => :file_link
+
+{Image Documentation}[http://rubydoc.info/github/iain/view/master/View/Image]
+{FileLink Documentation}[http://rubydoc.info/github/iain/view/master/View/FileLink]
+
+==== Booleans
+
+Booleans are automatically determined and converted into "Yes" and "No".
+
   view @user.admin?
 
-See the formatters in lib/views/formatters to see their full documentation.
+You can change the text via I18n:
+
+  en:
+    view:
+      booleans:
+        'true': Yup
+        'false': Nope
+
+{Documentation}[http://rubydoc.info/github/iain/view/master/View/Boolean]
+
+==== Blank values
+
+Blank values are usually caught before any other formatter. So the Blank formatter can be used
+even if you chose another.
+
+So if the post hasn't been published, it will use the blank formatter.
+
+  = view @post.published_at
+
+Normally, the blank formatter doesn't output anything. You can change that by using I18n:
+
+  en:
+    view:
+      blank: "<em>~</em>"
+
+
+{Documentation}[http://rubydoc.info/github/iain/view/master/View/Blank]
+
+== Configuration
+
+There a lots of ways to configure the gem itself and individual formatters too! Let's go over
+the most important ones:
+
+The `guess` formatter looks for methods it considers to be safe to display. The default list is
+
+* `to_label`
+* `display_name`
+* `full_name`
+* `title`
+* `username`
+* `login`
+* `value`
+* `to_s`
+
+It will use the first one it can find. If you want to add a method to that list, you can add
+a file in your initializers and write:
+
+  View.configure do |config|
+    config.guessing_methods = [ :my, :own, :methods ]
+  end
+
+If you wrote your own formatter that you would rather use, instead of the `auto` formatter:
+
+  View.configure do |config|
+    config.default_formatter = :my_own_formatter
+  end
+
+There is also a default formatter for arrays, which you can change like this:
+
+  View.configure do |config|
+    config.default_list_formatter = :sentence
+  end
+
+{Configuration}[http://rubydoc.info/github/iain/view/master/View/Configuration]
+
+You might have a special object, that you want to be rendered with your favorite formatter.
+You can let the auto formatter know about it. Say you want to display all numbers as delimited
+values (using the `number_with_delimiter` helper from Rails):
+
+  View::Auto.add :delimited do
+    value.is_a?(Fixnum)
+  end
+
+{Auto formatter}[http://rubydoc.info/github/iain/view/master/View/Auto]
+
+You can also customize formatters default options. To change every unit in currency,
+you can use this:
+
+  View::Currency.default_options = { :unit => "Cubits", :format => "%n %s" }
+
+Remember that the Rails number formatters can also be configured using I18n.
 
 == Adding formatters
 
-You can add a formatter by inheriting from +View::Formatter+.
-The only method you need to implement is the +format+ method.
+You can add a formatter by inheriting from `View::Formatter`.
+The only method you need to implement is the `format` method.
 
 In the class you have access to the following methods:
 
-* +value+: the object passed in
-* +options+: a filtered hash of options
-* +all_options+: the unfiltered hash
-* +template+: call methods like link_to on this
+* `value`: the object passed in
+* `options`: a filtered hash of options
+* `all_options`: the unfiltered hash
+* `template`: call methods like link_to on this
 
 If you wanted a uppercase formatter for example, you could do this:
 
@@ -88,7 +313,7 @@ If you wanted a uppercase formatter for example, you could do this:
 
 The name of the formatter is automatically infered from the name of the class.
 
-You can use the +.as+ method to specify a different name.
+You can use the `.as` method to specify a different name.
 
   class Foo < View::Formatter
     as :bar
@@ -102,7 +327,7 @@ You can control which options are allowed, by adding reserved options:
   end
 
 Now, the options method will return the options passed by the user, minus foo and bar.
-To use them, in your code, use the +all_options+ method.
+To use them, in your code, use the `all_options` method.
 This is done to easily pass the options to another method, without cluttering:
 
   class Paragraph < View::Formatter
@@ -122,21 +347,14 @@ To more tightly control which options are allowed, specify the allowed options:
 
 You can use the existing formatters as examples.
 
-== Configuration:
-
-See +lib/view.rb+ for information on configuration.
-
-== Installation
-
-Just add it to your Gemfile:
-
-  gem 'view'
-
-Run +bundle install+ and you're ready to go!
+{Documentation}[http://rubydoc.info/github/iain/view/master/View/Formatter]
 
 == Contributing
 
 Yes please! You know the drill: fork, commit, pull request, profit!
+
+I'm especially interested in ideas for formatters and new use cases.
+Use the {issue tracker}[http://github.com/iain/view/issues] to let me know!
 
 == License
 
