@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
 
   s.require_path      = "lib"
 
-  s.files             = Dir["lib/**/*.rb"] + ['init.rb']
+  s.files             = Dir["{lib,app}/**/*.rb"] + ['init.rb']
   s.test_files        = Dir["spec/**/*"]
   s.extra_rdoc_files  = ["README.rdoc"]
 
