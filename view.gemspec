@@ -5,13 +5,14 @@ Gem::Specification.new do |s|
   s.name              = "view"
   s.version           = View::VERSION
   s.platform          = Gem::Platform::RUBY
+  s.date              = Date.today.to_s
 
   s.authors           = ["Iain Hecker" ]
   s.email             = ["iain@iain.nl"]
   s.homepage          = "http://github.com/iain/view"
 
   s.summary           = "Displaying objects automatically"
-  s.description       = "A very extensible way of viewing objects, easily integrated with other gems"
+  s.description       = "A very extensible way of viewing objects"
 
   s.rubyforge_project = s.name
 
